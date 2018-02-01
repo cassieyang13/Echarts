@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘</title>
+    <script src="../echarts.js"></script>
+</head>
+<body>
+
+<div id="wrap" style="width: 800px; height: 500px;">
+
+</div>
+
+<script>
+
+    var wrap_obj = document.getElementById("wrap");
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(wrap_obj);
+
+
+    var option = {
+        tooltip : {
+            formatter: "{a} <br/>{b} : {c}%"
+        },
+        toolbox: {
+            feature: {
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        series: [
+            {
+                name: '业务指标',
+                type: 'gauge',
+
+                detail: {formatter:'{value}%'},
+                data: [{value: 50, name: 'CPU'}],
+                splitNumber: 4,
+                axisLine: {
+                    lineStyle: {
+                        color: [
+                            [0.25, "rgb(199, 216, 92)"],
+                            [0.5, 'rgb(0, 160, 227)'],
+                            [0.75, 'rgb(255, 166, 0)'],
+                            [1, 'rgb(242, 87, 46)']]
+                    }
+                }
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+     myChart.setOption(option);
+
+    setInterval(function () {
+        option.series[0].data[0].value = (Math.random() * 100).toFixed(2) - 0;
+        myChart.setOption(option, true);
+    },2000);
+
+
+</script>
+</body>
+</html>

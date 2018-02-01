@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../echarts.js"></script>
+</head>
+<body>
+
+
+<div id="pie_wrap" style="width: 350px; height: 380px;">
+
+
+</div>
+
+
+<script>
+    var pie_obj = document.getElementById("pie_wrap");
+    var myPie = echarts.init(pie_obj);
+
+    var legend_arr = [];
+
+
+
+    var json_data = {
+        "statistic": [
+            {
+                "deviceName": "oppo",
+                "total": "40",
+                "percentage": ""
+            },
+            {
+                "deviceName": "vivo",
+                "total": "20",
+                "percentage": ""
+            },
+            {
+                "deviceName": "xiaomi",
+                "total": "10",
+                "percentage": ""
+            },
+            {
+                "deviceName": "meizu",
+                "total": "30",
+                "percentage": ""
+            }
+        ]
+    };
+
+    function  doData(json_data) {
+
+        var color_arr = ["#33cc33", "#2673bf", "#ffaa00", "#fe6501"];
+        var statistic = json_data["statistic"];
+
+        var data = [];
+
+        for(var i=0; i<statistic.length; i++){
+            var one_data = {
+                itemStyle: {
+                    normal: {
+                        color: ""
+                    }
+
+                }
+            };
+            one_data.name = statistic[i]["deviceName"];
+            one_data.value = statistic[i]["total"];
+            one_data.itemStyle.normal.color = color_arr[i];
+
+            data.push(one_data);
+        }
+
+        return data;
+
+    }
+
+    var pie_data = doData(json_data);
+
+
+    var option = {
+        title : {
+            text: '终端流量统计',
+            left: "20"
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        series : [
+            {
+                name: '访问来源',
+                type: 'pie',
+                radius : '65%',
+                center: ['50%', '45%'],
+                data: pie_data,
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                label: {
+                    normal: {
+                        show: false
+                    }
+                },
+
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myPie.setOption(option);
+
+
+</script>
+</body>
+</html>

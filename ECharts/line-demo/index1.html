@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../echarts.js"></script>
+    <script src="../jquery.min.js"></script>
+</head>
+<body>
+
+<div id="wrap" style="width: 750px; height: 400px;">
+
+</div>
+
+<script>
+
+    function  doData() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:63342/ECharts/test/GetData",
+            success: function (data) {
+                var json_data = JSON.parse(data);
+                //console.log(json_data);
+
+                initCharts(json_data);
+            }
+        })
+    }
+    var ram_usage = [];
+    var time_point = [];
+
+    function  initCharts(json_data) {
+
+
+        if(ram_usage.length > 10){
+            ram_usage.shift();
+            time_point.shift();
+        }
+        ram_usage.push(json_data["ramUsage"]);
+
+        time_point.push(json_data["timePoint"]);
+        var wrap_obj = document.getElementById("wrap");
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(wrap_obj);
+
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(10, 36, 51, 0.8)',
+                axisPointer: {
+                    type: 'cross',
+                    lineStyle: {
+                        color: '#00629b',
+                        width: 1,
+                        type: 'dashed'
+                    }
+                },
+                textStyle: {
+                    fontFamily: '"rutledgeregular", sans-serif'
+                },
+                position: ['50%', '50%']
+            },
+            grid: {
+                left: "15%",
+                right: "2%",
+            },
+            xAxis: {
+                type: "category",
+                boundaryGap: false,
+                data: [],
+                axisLine: { // 坐标轴轴线相关设置。
+                    lineStyle: {
+                        color: '#d8d8d9',
+                        width: 2,
+                        type: 'dashed'
+                    }
+                },
+                splitLine: { // 坐标轴在 grid 区域中的分隔线。
+                    lineStyle: {
+                        color: '#d8d8d9',
+                        width: 2,
+                        type: 'dashed'
+                    }
+                },
+                axisLabel: { // 坐标轴刻度标签的相关设置。
+                    textStyle: {
+                        fontFamily: '"rutledgeregular", sans-serif',
+                        fontSize: 12,
+                        color: '#3f3f45'
+                    }
+                }
+            },
+            yAxis: {
+                type: "value",
+                axisLine: {
+                    lineStyle: {
+                        color: '#d8d8d9',
+                        width: 2,
+                        type: 'dashed'
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#d8d8d9',
+                        width: 2,
+                        type: 'dashed'
+                    }
+                },
+                axisLabel: {
+                    // Add by Emil.You 2016-2-19 start
+                    // 修改单位缺失的问题
+                    formatter: '{value} Mb/s',
+                    // Add by Emil.You 2016-2-19 end
+                    textStyle: {
+                        fontFamily: '"rutledgeregular", sans-serif',
+                        fontSize: 12,
+                        color: '#3f3f45'
+                    }
+                }
+            },
+            series: {
+                name: "RAM",
+                type: "line",
+                areaStyle: {normal: {}},
+                markPoint: {
+                    symbolSize: 80,
+                    label: {
+                        normal: {
+                            show: true,
+                            formatter: "{c}"
+                        }
+                    },
+                    data: [{
+                        type: "max",
+                        name: "max"
+                    }, {
+                        type: "min",
+                        name: "min"
+                    }]
+                },
+                data: ram_usage,
+                itemStyle: {
+                    normal: {
+                        color: "rgb(143, 195, 31)"
+                    }
+                }
+            }
+        }
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+    //initCharts();
+    doData();
+    setInterval(doData, 5000);
+
+</script>
+</body>
+</html>
